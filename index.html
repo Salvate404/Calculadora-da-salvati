@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Toldos</title>
+    <style>
+        /* --- ESTILOS CSS EMBUTIDOS --- */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .input-group, .select-group, .result-area {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input[type="number"], select {
+            width: calc(100% - 22px); /* Ajusta largura com padding e borda */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Inclui padding e borda na largura */
+        }
+
+        .option-buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Para envolver em telas menores */
+        }
+
+        .option-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, box-shadow 0.2s ease;
+            flex: 1; /* Permite que os botões se expandam */
+            min-width: 120px; /* Largura mínima para botões */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .option-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .option-buttons button.selected {
+            background-color: #28a745;
+            box-shadow: 0 0 0 2px #28a745, 0 0 0 4px rgba(40, 167, 69, 0.5); /* Efeito de seleção */
+        }
+
+        .option-buttons img {
+            width: 30px; /* Tamanho da imagem no botão */
+            height: 30px;
+            vertical-align: middle;
+            border-radius: 3px;
+        }
+
+        .price-list {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #333;
+            text-align: left;
+        }
+
+        .price-list div {
+            margin-bottom: 5px;
+        }
+
+        .result-area {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 30px;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Toldos</h1>
+
+        <div class="input-group">
+            <label for="largura">Largura (metros):</label>
+            <input type="number" id="largura" placeholder="Ex: 3.5" step="0.01" min="0">
+        </div>
+
+        <div class="input-group">
+            <label id="medidaSecundariaLabel" for="medidaSecundaria">Caimento (metros):</label>
+            <input type="number" id="medidaSecundaria" placeholder="Ex: 2.0" step="0.01" min="0">
+        </div>
+
+        <div class="select-group">
+            <label>Tipo de Toldo:</label>
+            <div class="option-buttons">
+                <button id="btnCortina" data-type="cortina" class="selected">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAgMAAADj5y1rAAAABlBMVEVpaWmZmZnmO/gqAAAAAXRSTlMAsXyVjAAAAFhJREFUeAHt0UEOgjAQBNDbU4yQnKk8hXQhK0Q3f89O9hOIQq1a7A8M/B2M77fP0e6+j/8d033eS8b5aP7978B4+N/f2d8D4+F/f3/fGxj9/f1/AwAYl02a6W0+fAAAAABJRU5ErkJggg==" alt="Cortina"> Cortina
+                </button>
+                <button id="btnCapota" data-type="capota">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABAAgMAAADj5y1rAAAABlBMVEVpaWmZmZnmO/gqAAAAAXRSTlMAQObYZgAAADRJREFUeAFjYBgFgwkEAIRxXf9HGCcQAwjT/wBw/p+JAAQAAOQ5sBwY04QIAAAAAElFTkSuQmCC" alt="Capota"> Capota
+                </button>
+            </div>
+        </div>
+
+        <div class="select-group">
+            <label for="marcaLona">Marca da Lona:</label>
+            <select id="marcaLona">
+                </select>
+            <div id="priceList" class="price-list">
+                </div>
+        </div>
+
+        <div class="result-area">
+            Preço Estimado: <span id="valorTotal">R$ 0,00</span>
+        </div>
+    </div>
+
+    <script>
+        /* --- CÓDIGO JAVASCRIPT EMBUTIDO --- */
+
+        // Referências aos elementos HTML
+        const larguraInput = document.getElementById('largura');
+        const medidaSecundariaInput = document.getElementById('medidaSecundaria');
+        const medidaSecundariaLabel = document.getElementById('medidaSecundariaLabel');
+        const tipoToldoButtons = document.querySelectorAll('.option-buttons button');
+        const marcaLonaSelect = document.getElementById('marcaLona');
+        const priceListDiv = document.getElementById('priceList');
+        const valorTotalSpan = document.getElementById('valorTotal');
+
+        // --- DEFINA AQUI SEUS PREÇOS E VARIÁVEIS ---
+        // PREÇOS POR METRO QUADRADO (m²) para lonas
+        const precosLona = {
+            "Sansuy": 35.70,
+            "SL": 27.05,
+            "Night&day": 30.00,
+            "Slim": 22.30
+        };
+
+        // PREÇOS FIXOS PARA COSTURA MÍNIMA
+        const precoMinCosturaCortina = 45.00;
+        const precoMinCosturaCapota = 45.00;
+
+        // Variáveis para armazenar as seleções do usuário
+        let tipoToldoSelecionado = 'cortina'; // Padrão inicial: Cortina
+
+        // --- Funções de Inicialização e Lógica ---
+
+        function init() {
+            // Preenche o <select> de marcas de lona
+            for (const marca in precosLona) {
+                const option = document.createElement('option');
+                option.value = marca;
+                option.textContent = marca;
+                marcaLonaSelect.appendChild(option);
+            }
+            // Seleciona a primeira opção por padrão
+            marcaLonaSelect.value = Object.keys(precosLona)[0];
+
+            updateMeasureLabel(); // Atualiza o label da medida secundária no início
+            updatePriceList(); // Atualiza a lista de preços inicialmente
+            calcularPreco(); // Calcula o preço inicial
+        }
+
+        function updateMeasureLabel() {
+            if (tipoToldoSelecionado === 'cortina') {
+                medidaSecundariaLabel.textContent = 'Caimento (metros):';
+                medidaSecundariaInput.placeholder = 'Ex: 2.0';
+            } else { // Capota
+                medidaSecundariaLabel.textContent = 'Perna (metros):';
+                medidaSecundariaInput.placeholder = 'Ex: 0.8';
+            }
+        }
+
+        function updatePriceList() {
+            priceListDiv.innerHTML = '<h4>Preços de Lona por m²:</h4>';
+            for (const marca in precosLona) {
+                const div = document.createElement('div');
+                div.textContent = `${marca}: R$ ${precosLona[marca].toFixed(2)}`;
+                priceListDiv.appendChild(div);
+            }
+            priceListDiv.innerHTML += `<h4>Preços de Costura Mínima:</h4>`;
+            priceListDiv.innerHTML += `<div>Cortina: R$ ${precoMinCosturaCortina.toFixed(2)}</div>`;
+            priceListDiv.innerHTML += `<div>Capota: R$ ${precoMinCosturaCapota.toFixed(2)}</div>`;
+        }
+
+        function calcularPreco() {
+            const largura = parseFloat(larguraInput.value);
+            const medidaSecundaria = parseFloat(medidaSecundariaInput.value); // Será caimento ou perna
+
+            // Validação básica dos inputs
+            if (isNaN(largura) || largura <= 0 || isNaN(medidaSecundaria) || medidaSecundaria <= 0) {
+                valorTotalSpan.textContent = "R$ 0,00 (Insira valores válidos)";
+                return;
+            }
+
+            const marcaLonaAtual = marcaLonaSelect.value;
+            const precoM2Lona = precosLona[marcaLonaAtual];
+
+            let precoFinalLona = 0;
+            let precoFinalCostura = 0;
+            let pano = 0;
+            let metragem = 0;
+
+            if (tipoToldoSelecionado === 'cortina') {
+                const caimento = medidaSecundaria;
+                pano = Math.ceil(largura / 1.40); // Arredonda para cima
+                metragem = pano * (caimento + 0.10);
+                precoFinalLona = metragem * precoM2Lona;
+                precoFinalCostura = largura * 4.50 * caimento;
+                
+                // Aplica preço mínimo da costura
+                if (precoFinalCostura < precoMinCosturaCortina) {
+                    precoFinalCostura = precoMinCosturaCortina;
+                }
+            
+
+            } else { // Capota
+                const perna = medidaSecundaria;
+                pano = Math.ceil(((perna * 2) + largura) / 1.40); // Arredonda para cima
+                metragem = pano * perna * 2;
+                precoFinalLona = metragem * precoM2Lona;
+                precoFinalCostura = ((perna * 4) + (largura + perna + perna)) * 7.80;
+
+
+                // Aplica preço mínimo da costura
+                if (precoFinalCostura < precoMinCosturaCapota) {
+                    precoFinalCostura = precoMinCosturaCapota;
+                }
+            }
+            
+            const custoTotal = precoFinalLona + precoFinalCostura;
+            valorTotalSpan.textContent = `R$ ${custoTotal.toFixed(2)}`;
+        }
+
+        // --- Event Listeners ---
+
+        larguraInput.addEventListener('input', calcularPreco);
+        medidaSecundariaInput.addEventListener('input', calcularPreco);
+
+        tipoToldoButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tipoToldoButtons.forEach(btn => btn.classList.remove('selected')); // Remove seleção de todos
+                button.classList.add('selected'); // Adiciona seleção ao clicado
+                tipoToldoSelecionado = button.dataset.type;
+                updateMeasureLabel(); // Atualiza o label do campo secundário
+                calcularPreco();
+            });
+        });
+
+        marcaLonaSelect.addEventListener('change', calcularPreco);
+
+        // Inicializa o script quando a página carrega
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
